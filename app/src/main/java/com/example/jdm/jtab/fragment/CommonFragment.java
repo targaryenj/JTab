@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.jdm.jtab.R;
@@ -18,6 +19,7 @@ public class CommonFragment extends Fragment{
     private int fragmentIndex;
 
     private TextView mTextView;
+    private Button mButton;
 
     public static CommonFragment newInstance(int fragmentId){
         CommonFragment fragment = new CommonFragment();

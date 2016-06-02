@@ -16,4 +16,12 @@
         android:layout_height="wrap_content"
         style="?android:listSeparatorTextViewStyle"/>
 
+    <com.example.jdm.jtab.view.QQMessagePointView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent">
+
+
+    </com.example.jdm.jtab.view.QQMessagePointView>
+
 </LinearLayout>
