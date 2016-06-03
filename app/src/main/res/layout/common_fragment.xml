@@ -4,12 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--<android.support.v7.widget.RecyclerView
-        android:id="@+id/fragment_recycle_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#ffffff"/>-->
-
     <TextView
         android:id="@+id/fragment_title_label"
         android:layout_width="match_parent"
@@ -17,11 +11,12 @@
         style="?android:listSeparatorTextViewStyle"/>
 
     <com.example.jdm.jtab.view.QQMessagePointView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/qq_view"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:background="@android:color/transparent">
 
-
     </com.example.jdm.jtab.view.QQMessagePointView>
+
 
 </LinearLayout>

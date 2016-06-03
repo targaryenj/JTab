@@ -5,13 +5,13 @@
     android:background="@android:color/white"
     android:orientation="vertical">
 
-    <android.support.v4.view.ViewPager
+    <com.example.jdm.jtab.view.CustomViewPager
         android:id="@+id/main_view_pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         >
-    </android.support.v4.view.ViewPager>
+    </com.example.jdm.jtab.view.CustomViewPager>
 
     <com.example.jdm.jtab.view.TabView
         android:id="@+id/id_tab"

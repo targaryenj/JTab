@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.jdm.jtab.fragment.CommonFragment;
+import com.example.jdm.jtab.view.CustomViewPager;
 import com.example.jdm.jtab.view.TabView;
 
 import java.util.HashMap;
@@ -18,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private String[] mTitle = {"微信", "通讯录", "发现", "我"};
     private int[] mIconSelect = {R.drawable.al_, R.drawable.al8, R.drawable.alb, R.drawable.ald};
     private int[] mIconNormal = {R.drawable.ala, R.drawable.al9, R.drawable.alc, R.drawable.ale};
-    private ViewPager mViewPager ;
+    private CustomViewPager mViewPager ;
     private TabView mTabView ;
     private Map<Integer,Fragment> mFragmentMap ;
 
@@ -28,9 +29,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mFragmentMap = new HashMap<>();
 
-        mViewPager = (ViewPager) findViewById(R.id.main_view_pager);
+        mViewPager = (CustomViewPager) findViewById(R.id.main_view_pager);
         mViewPager.setOffscreenPageLimit(4);
         mViewPager.setAdapter(new PageAdapter(getSupportFragmentManager()));
+        mViewPager.setChildId(R.id.qq_view);
 
         mTabView = (TabView) findViewById(R.id.id_tab);
         mTabView.setViewPager(mViewPager);

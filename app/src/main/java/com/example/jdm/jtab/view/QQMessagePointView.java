@@ -9,20 +9,23 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.AnimationDrawable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.jdm.jtab.R;
 
 /**
+ *
  * Created by JDM on 2016/6/2.
  */
 public class QQMessagePointView extends FrameLayout {
     // 默认圆半径
-    public static final float DEFAULT_RADIUS = 30;
+    public static final float DEFAULT_RADIUS = 35;
 
     private Paint mPaint;
     private Path path;
@@ -42,14 +45,14 @@ public class QQMessagePointView extends FrameLayout {
     // 定点圆半径
     float radius = DEFAULT_RADIUS;
 
-    // 判断动画知否开始
+    // 判断动画是否开始
     boolean isAnimStart;
 
     // 判断是否开始拖动
     boolean isDrag;
 
     ImageView exploredImageView;
-    ImageView tipImageView;
+    TextView tipTextView;
 
 
     public QQMessagePointView(Context context) {
@@ -65,6 +68,9 @@ public class QQMessagePointView extends FrameLayout {
         init();
     }
 
+    /**
+     * 初始化画笔，消息爆炸View，消息View
+     */
     private void init() {
         path = new Path();
 
@@ -80,13 +86,16 @@ public class QQMessagePointView extends FrameLayout {
         exploredImageView.setImageResource(R.drawable.tip_anim);
         exploredImageView.setVisibility(View.INVISIBLE);
 
+        LayoutParams tipParams = new LayoutParams(70,70);
+        tipTextView = new TextView(getContext());
+        tipTextView.setLayoutParams(tipParams);
+        tipTextView.setText("1");
+        tipTextView.setTextColor(Color.WHITE);
+        tipTextView.setTextSize(16f);
+        tipTextView.setGravity(Gravity.CENTER);
+        tipTextView.setBackgroundResource(R.drawable.oval_message);
 
-        tipImageView = new ImageView(getContext());
-        tipImageView.setLayoutParams(params);
-        tipImageView.setImageResource(R.drawable.skin_tips_newmessage_one);
-
-
-        addView(tipImageView);
+        addView(tipTextView);
         addView(exploredImageView);
 
     }
@@ -96,9 +105,54 @@ public class QQMessagePointView extends FrameLayout {
         exploredImageView.setX(startX - exploredImageView.getWidth() / 2);
         exploredImageView.setY(startY - exploredImageView.getHeight() / 2);
 
-        tipImageView.setX(startX - tipImageView.getWidth() / 2 );
-        tipImageView.setY(startY - tipImageView.getHeight() / 2 );
+        tipTextView.setX(startX - tipTextView.getWidth() / 2 );
+        tipTextView.setY(startY - tipTextView.getHeight() / 2 );
         super.onLayout(changed, left, top, right, bottom);
+    }
+
+    private void calculate() {
+        // 计算起点位置到手势坐标的距离
+        float distance = (float) Math.sqrt(Math.pow(y-startY,2) + Math.pow(x-startX,2));
+        radius = -distance / 15 + DEFAULT_RADIUS;
+
+        if (radius < 9){
+            isAnimStart = true;
+
+            exploredImageView.setVisibility(View.VISIBLE);
+            exploredImageView.setImageResource(R.drawable.tip_anim);
+
+            ((AnimationDrawable)exploredImageView.getDrawable()).stop();
+            ((AnimationDrawable)exploredImageView.getDrawable()).start();
+
+            tipTextView.setVisibility(View.GONE);
+        }
+
+        // 根据角度算出四角形的四个点
+        float offsetX = (float)(radius* Math.sin(Math.atan((y-startY)/(x - startX))));
+        float offsetY = (float)(radius* Math.cos(Math.atan((y-startY)/(x - startX))));
+
+        float x1 = startX - offsetX;
+        float y1 = startY + offsetY;
+
+        float x2 = x - offsetX;
+        float y2 = y + offsetY;
+
+        float x3 = x + offsetX;
+        float y3 = y - offsetY;
+
+        float x4 = startX + offsetX;
+        float y4 = startY - offsetY;
+
+        path.reset();
+        path.moveTo(x1,y1);
+        path.quadTo(anchorX,anchorY,x2,y2);
+        path.lineTo(x3,y3);
+        path.quadTo(anchorX,anchorY,x4,y4);
+        path.lineTo(x1,y1);
+
+        // 更改消息位置
+        tipTextView.setX(x - tipTextView.getWidth()/2);
+        tipTextView.setY(y - tipTextView.getHeight()/2);
     }
 
     @Override
@@ -115,78 +169,38 @@ public class QQMessagePointView extends FrameLayout {
         super.onDraw(canvas);
     }
 
-    private void calculate() {
-        float distance = (float) Math.sqrt(Math.pow(y-startY,2)+ Math.pow(x-startX,2));
-        radius = -distance/15 + DEFAULT_RADIUS;
-
-        if (radius < 5){
-            isAnimStart = true;
-
-            exploredImageView.setVisibility(View.VISIBLE);
-            exploredImageView.setImageResource(R.drawable.tip_anim);
-
-            ((AnimationDrawable)exploredImageView.getDrawable()).stop();
-            ((AnimationDrawable)exploredImageView.getDrawable()).start();
-
-            tipImageView.setVisibility(View.GONE);
-        }
-
-        // 根据角度算出四角形的四个点
-        float offsetX = (float)(radius* Math.sin(Math.atan(y-startY)/(x - startX) ));
-        float offsetY = (float)(radius* Math.cos(Math.atan(y-startY)/(x - startX) ));
-
-        float x1 = startX - offsetX;
-        float y1 = startY + offsetY;
-
-        float x2 = x - offsetX;
-        float y2 = y + offsetY;
-
-        float x3 = x + offsetX;
-        float y3 = y - offsetY;
-
-        float x4 = startX + offsetX;
-        float y4 = startY - offsetY;
-
-        path.reset();;
-        path.moveTo(x1,y1);
-        path.quadTo(anchorX,anchorY,x2,y2);
-        path.lineTo(x3,y3);
-        path.quadTo(anchorX,anchorY,x4,y4);
-        path.lineTo(x1,y1);
-
-        // 更改图标位置
-        tipImageView.setX(x - tipImageView.getWidth()/2);
-        tipImageView.setY(y - tipImageView.getHeight()/2);
-    }
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN){
-            // 判断触摸点是否在tipImageView中
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            // 判断触摸点是否在tipTextView中
             Rect rect = new Rect();
             int[] location = new int[2];
-            tipImageView.getDrawingRect(rect);
-            tipImageView.getLocationOnScreen(location);
+
+            tipTextView.getDrawingRect(rect);
+            tipTextView.getLocationOnScreen(location);
+
             rect.left = location[0];
             rect.top = location[1];
             rect.right = rect.right + location[0];
             rect.bottom = rect.bottom + location[1];
-            if (rect.contains((int)event.getRawX(),(int)event.getRawY())){
+
+            if (rect.contains((int) event.getRawX(), (int) event.getRawY())) {
                 isDrag = true;
             }
 
         } else if (event.getAction() == MotionEvent.ACTION_UP ||
-                event.getAction() == MotionEvent.ACTION_CANCEL){
+                event.getAction() == MotionEvent.ACTION_CANCEL) {
             isDrag = false;
-            tipImageView.setX(startX - tipImageView.getWidth()/2);
-            tipImageView.setY(startY - tipImageView.getHeight()/2);
+
+            tipTextView.setX(startX - tipTextView.getWidth() / 2);
+            tipTextView.setY(startY - tipTextView.getHeight() / 2);
         }
         invalidate();
-        if (isAnimStart){
+        if (isAnimStart) {
             return super.onTouchEvent(event);
         }
-        anchorX = (event.getX() + startX)/2;
-        anchorY = (event.getY() + startY)/2;
+        anchorX = (event.getX() + startX) / 2;
+        anchorY = (event.getY() + startY) / 2;
         x = event.getX();
         y = event.getY();
         return true;
