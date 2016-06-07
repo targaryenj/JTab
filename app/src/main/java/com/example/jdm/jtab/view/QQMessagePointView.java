@@ -1,5 +1,7 @@
 package com.example.jdm.jtab.view;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,6 +15,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,8 +42,8 @@ public class QQMessagePointView extends FrameLayout {
     float anchorY = 300;
 
     // 起点坐标
-    float startX = 100;
-    float startY = 100;
+    float startX = 200;
+    float startY = 200;
 
     // 定点圆半径
     float radius = DEFAULT_RADIUS;
@@ -192,8 +195,31 @@ public class QQMessagePointView extends FrameLayout {
                 event.getAction() == MotionEvent.ACTION_CANCEL) {
             isDrag = false;
 
-            tipTextView.setX(startX - tipTextView.getWidth() / 2);
-            tipTextView.setY(startY - tipTextView.getHeight() / 2);
+            // 判断触摸点是否在tipTextView中
+            Rect rect = new Rect();
+            int[] location = new int[2];
+
+            tipTextView.getDrawingRect(rect);
+            tipTextView.getLocationOnScreen(location);
+
+            rect.left = location[0];
+            rect.top = location[1];
+            rect.right = rect.right + location[0];
+            rect.bottom = rect.bottom + location[1];
+
+            if (rect.contains((int) event.getRawX(), (int) event.getRawY())) {
+
+                float endX = startX - tipTextView.getWidth() / 2;
+                float endY = startY - tipTextView.getHeight() / 2;
+
+                ObjectAnimator tipXAnimator = ObjectAnimator.ofFloat(tipTextView,"x",event.getX(),endX).setDuration(600);
+                ObjectAnimator tipYAnimator = ObjectAnimator.ofFloat(tipTextView,"y",event.getY(),endY).setDuration(600);
+                AnimatorSet animatorSet = new AnimatorSet();
+                animatorSet.setInterpolator(new OvershootInterpolator(3));
+                animatorSet.play(tipXAnimator).with(tipYAnimator);
+                animatorSet.start();
+
+            }
         }
         invalidate();
         if (isAnimStart) {

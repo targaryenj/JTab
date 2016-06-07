@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.jdm.jtab.fragment.CommonFragment;
+import com.example.jdm.jtab.fragment.SunsetFragment;
 import com.example.jdm.jtab.view.CustomViewPager;
 import com.example.jdm.jtab.view.TabView;
 
@@ -68,7 +69,11 @@ public class MainActivity extends AppCompatActivity {
     private Fragment getFragment(int position){
         Fragment fragment = mFragmentMap.get(position) ;
         if(fragment == null){
-            fragment = CommonFragment.newInstance(position);
+            if (position != 0){
+                fragment = CommonFragment.newInstance(position);
+            }else {
+                fragment = SunsetFragment.newInstance();
+            }
             mFragmentMap.put(position,fragment) ;
         }
         return fragment ;
