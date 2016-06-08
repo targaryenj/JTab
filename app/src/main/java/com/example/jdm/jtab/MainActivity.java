@@ -8,8 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.jdm.jtab.fragment.CommonFragment;
+import com.example.jdm.jtab.fragment.QQListFragment;
 import com.example.jdm.jtab.fragment.SunsetFragment;
 import com.example.jdm.jtab.view.CustomViewPager;
+import com.example.jdm.jtab.view.QQTipView;
 import com.example.jdm.jtab.view.TabView;
 
 import java.util.HashMap;
@@ -24,16 +26,23 @@ public class MainActivity extends AppCompatActivity {
     private TabView mTabView ;
     private Map<Integer,Fragment> mFragmentMap ;
 
+    //
+    private QQTipView qqTipView;
+    private QQListFragment qqListFragment = QQListFragment.newInstance(1);
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mFragmentMap = new HashMap<>();
 
+        qqTipView = (QQTipView) findViewById(R.id.qq_tip);
+        qqListFragment.setTipsView(qqTipView);
+
         mViewPager = (CustomViewPager) findViewById(R.id.main_view_pager);
         mViewPager.setOffscreenPageLimit(4);
         mViewPager.setAdapter(new PageAdapter(getSupportFragmentManager()));
-        mViewPager.setChildId(R.id.qq_view);
 
         mTabView = (TabView) findViewById(R.id.id_tab);
         mTabView.setViewPager(mViewPager);
@@ -69,10 +78,16 @@ public class MainActivity extends AppCompatActivity {
     private Fragment getFragment(int position){
         Fragment fragment = mFragmentMap.get(position) ;
         if(fragment == null){
-            if (position != 0){
-                fragment = CommonFragment.newInstance(position);
-            }else {
-                fragment = SunsetFragment.newInstance();
+            switch (position){
+                case 0:
+                    fragment = SunsetFragment.newInstance();
+                    break;
+                case 1:
+                    fragment = qqListFragment;
+                    break;
+                default:
+                    fragment = CommonFragment.newInstance(position);
+                    break;
             }
             mFragmentMap.put(position,fragment) ;
         }

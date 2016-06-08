@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="text_size" format="dimension"/>
-    <attr name="text_select_color" format="color"/>
-    <attr name="text_normal_color" format="color"/>
-    <attr name="item_padding" format="dimension"/>
+
     <declare-styleable name="TabView">
-        <attr name="text_size"></attr>
-        <attr name="text_select_color"></attr>
-        <attr name="text_normal_color"></attr>
-        <attr name="item_padding"></attr>
+        <attr name="text_size" format="dimension"/>
+        <attr name="text_select_color" format="color"/>
+        <attr name="text_normal_color" format="color"/>
+        <attr name="item_padding" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="QQMessagePointView">
+        <attr name="tip_start_x" format="dimension"/>
+        <attr name="tip_start_y" format="dimension"/>
+        <attr name="tip_size" format="dimension"/>
+        <attr name="tip_radius" format="dimension"/>
     </declare-styleable>
 </resources>

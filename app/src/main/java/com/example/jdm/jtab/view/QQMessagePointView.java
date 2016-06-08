@@ -3,6 +3,7 @@ package com.example.jdm.jtab.view;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,6 +12,7 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.AnimationDrawable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,6 +35,9 @@ public class QQMessagePointView extends FrameLayout {
     private Paint mPaint;
     private Path path;
 
+    /** 消息数 */
+    private String tipNumber = "1";
+
     // 手势坐标
     float x = 300;
     float y = 300;
@@ -47,6 +52,8 @@ public class QQMessagePointView extends FrameLayout {
 
     // 定点圆半径
     float radius = DEFAULT_RADIUS;
+
+    int tipSize = 70;
 
     // 判断动画是否开始
     boolean isAnimStart;
@@ -68,6 +75,25 @@ public class QQMessagePointView extends FrameLayout {
 
     public QQMessagePointView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        TypedArray typedArray = getResources().obtainAttributes(attrs,R.styleable.QQMessagePointView);
+        int indexCount = typedArray.getIndexCount();
+        for (int i = 0;i < indexCount;i++){
+            switch (typedArray.getIndex(i)){
+                case R.styleable.QQMessagePointView_tip_start_x:
+                    startX = typedArray.getDimension(i, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX,startX,getResources().getDisplayMetrics()));
+                    break;
+                case R.styleable.QQMessagePointView_tip_start_y:
+                    startY = typedArray.getDimension(i, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX,startY,getResources().getDisplayMetrics()));
+                    break;
+                case R.styleable.QQMessagePointView_tip_size:
+                    tipSize = (int)typedArray.getDimension(i, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,tipSize,getResources().getDisplayMetrics()));
+                    break;
+                case R.styleable.QQMessagePointView_tip_radius:
+                    radius = typedArray.getDimension(i, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX,tipSize,getResources().getDisplayMetrics()));
+                    break;
+            }
+        }
+        typedArray.recycle();
         init();
     }
 
@@ -89,10 +115,10 @@ public class QQMessagePointView extends FrameLayout {
         exploredImageView.setImageResource(R.drawable.tip_anim);
         exploredImageView.setVisibility(View.INVISIBLE);
 
-        LayoutParams tipParams = new LayoutParams(70,70);
+        LayoutParams tipParams = new LayoutParams(tipSize,tipSize);
         tipTextView = new TextView(getContext());
         tipTextView.setLayoutParams(tipParams);
-        tipTextView.setText("1");
+        tipTextView.setText(tipNumber);
         tipTextView.setTextColor(Color.WHITE);
         tipTextView.setTextSize(16f);
         tipTextView.setGravity(Gravity.CENTER);
@@ -116,7 +142,7 @@ public class QQMessagePointView extends FrameLayout {
     private void calculate() {
         // 计算起点位置到手势坐标的距离
         float distance = (float) Math.sqrt(Math.pow(y-startY,2) + Math.pow(x-startX,2));
-        radius = -distance / 15 + DEFAULT_RADIUS;
+        radius = - distance / 15 + DEFAULT_RADIUS;
 
         if (radius < 9){
             isAnimStart = true;
@@ -131,8 +157,8 @@ public class QQMessagePointView extends FrameLayout {
         }
 
         // 根据角度算出四角形的四个点
-        float offsetX = (float)(radius* Math.sin(Math.atan((y-startY)/(x - startX))));
-        float offsetY = (float)(radius* Math.cos(Math.atan((y-startY)/(x - startX))));
+        float offsetX = (float)(radius * Math.sin( Math.atan((y-startY)/(x - startX))  ));
+        float offsetY = (float)(radius * Math.cos( Math.atan((y-startY)/(x - startX))  ));
 
         float x1 = startX - offsetX;
         float y1 = startY + offsetY;

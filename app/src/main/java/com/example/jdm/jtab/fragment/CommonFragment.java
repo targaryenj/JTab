@@ -19,7 +19,6 @@ public class CommonFragment extends Fragment{
     private int fragmentIndex;
 
     private TextView mTextView;
-    private Button mButton;
 
     public static CommonFragment newInstance(int fragmentId){
         CommonFragment fragment = new CommonFragment();
